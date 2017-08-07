@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hello!</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h1 id="assignment-1-lamp-post-measurement">Assignment 1: Lamp Post measurement</h1>
+
+
+
+<h4 id="submitted-by-suyash-agrawal-2015cs10262">Submitted by: Suyash Agrawal , 2015CS10262</h4>
+
+
+
+<h3 id="basic-assumptions">Basic Assumptions</h3>
+
+<ul>
+<li>We require the field of view of the camera. Either this can be given in specifications itself or this can be easily calculated by placing an object of known length at a known distance from camera (this gives us the angle subtended ) and dividing the angle with the ratio of the length of object in image by image height. Let us denote the field of view of camera by <script type="math/tex" id="MathJax-Element-1">\Omega</script>.</li>
+<li>We assume the camera to be kept on the ground and thus field of vision will be reduced by half.</li>
+<li>The object is sufficiently far away that whole of it is visible in the image.</li>
+</ul>
+
+<p><img src="http://i.imgur.com/n8Pof2bg.jpg" alt="Diagram" title=""></p>
+
+
+
+<h3 id="procedure-for-vertical-height-measurement">Procedure for vertical height measurement</h3>
+
+<ul>
+<li>Take a picture from unknown distance <script type="math/tex" id="MathJax-Element-2">l</script> of the pole. Let the real height of pole be <script type="math/tex" id="MathJax-Element-3">h</script> (vertically from ground). Let picture height be <script type="math/tex" id="MathJax-Element-4">w</script> and height of pole in picture be <script type="math/tex" id="MathJax-Element-5">p</script>.</li>
+<li>Move <script type="math/tex" id="MathJax-Element-6">d</script> distance towards the pole and take a picture. Let the new height of pole in picture be <script type="math/tex" id="MathJax-Element-7">p'</script> .</li>
+<li>Now using equation <script type="math/tex" id="MathJax-Element-8">iv</script> we can measure angle <script type="math/tex" id="MathJax-Element-9">\theta</script> and using equation <script type="math/tex" id="MathJax-Element-10">iii</script> we can measure angle <script type="math/tex" id="MathJax-Element-11">\theta'</script> .</li>
+<li>Then using equation <script type="math/tex" id="MathJax-Element-12">v</script> we measure the vertical height <script type="math/tex" id="MathJax-Element-13">h</script> of pole from ground. <br>
+<img src="http://i.imgur.com/kVh5jWn.jpg" alt="Equations" title=""></li>
+</ul>
+
+
+
+<h3 id="procedure-for-angle-inclination-measurement">Procedure for angle inclination measurement</h3>
+
+<ul>
+<li>First measure the actual length of pole ( <script type="math/tex" id="MathJax-Element-14">L</script> ) in image and multiplying it by a factor <script type="math/tex" id="MathJax-Element-15">h/p</script>.</li>
+<li>Then calculate the inclination from vertical using : <script type="math/tex" id="MathJax-Element-16">\theta_a</script> = <script type="math/tex" id="MathJax-Element-17">\cos^{-1}(L/h)</script> </li>
+</ul></div></body>
+</html>
