@@ -1,0 +1,332 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath,mathpazo}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{commath}
+\usepackage{enumitem}
+
+\geometry{
+  top=20mm,
+}
+\newcommand{\boldvec}[1]{\boldsymbol{\vec{\textbf{#1}}}}
+\newcommand{\capvec}[1]{\boldsymbol{\hat{\textbf{#1}}}}
+\begin{document}
+
+\title{COL780 - Computer Vision\\Minor 1}
+\author{Suyash Agrawal\\2015CS10262}
+
+\maketitle
+
+\section*{Question 5}
+Expanding given appromixation equation we get:
+\begin{align*}
+u &= u_0 + xu_x + yu_y\\
+v &= v_0 + xv_x + yv_y
+\end{align*}
+The Optical flow equation is:
+$$ uI_x + vI_y + I_t = 0 $$
+Putting the given equation in optical flow equation, we get:
+$$ I_x(u_0 + xu_x + yu_y) + I_y(v_0 + xv_x + yv_y) = -I_t $$
+Now, we take a region around the point $(x,y)$ and we assume that optical flow assumptions
+hold in this region.\\
+Thus, using the above equation, we can transform our case into a least square problem as follows:\\
+Define matrix $\mathbf{A}$ as:
+$$
+\mathbf{A} = \begin{bmatrix}
+  I_x(p1) & x_{p1}I_x(p1) & y_{p1}I_x(p1) & I_y(p1) & x_{p1}I_y(p1) & y_{p1}I_y(p1)\\
+  I_x(p2) & x_{p2}I_x(p2) & y_{p2}I_x(p2) & I_y(p2) & x_{p2}I_y(p2) & y_{p2}I_y(p2)\\
+  \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+  I_x(pn) & x_{pn}I_x(pn) & y_{pn}I_x(pn) & I_y(pn) & x_{pn}I_y(pn) & y_{pn}I_y(pn)
+\end{bmatrix}
+$$
+and $\vec{u}$ and $\vec{b}$ as:
+$$
+\vec{u} = \begin{bmatrix}
+  u_0 \\
+  u_x \\
+  u_y \\
+  v_0 \\
+  v_x \\
+  v_y
+\end{bmatrix}
+\qquad
+\vec{b} = -\begin{bmatrix}
+  I_t(p1) \\
+  I_t(p2) \\
+  \vdots \\
+  I_t(pn)
+\end{bmatrix}
+$$
+and our least square problem becomes
+$$ \min \quad \lVert \mathbf{A}\vec{u} - \vec{b} \rVert^2 $$
+whose solution comes out to be:
+$$ \vec{u} = (A^TA)^{-1}A^Tb$$
+The assumption that we made in this case are:
+\begin{enumerate}
+\item
+The values of the parameter don't change for the $n$ points near $(x,y)$.
+\item
+Matrix $A^TA$ is invertible.
+\end{enumerate}
+\pagebreak
+
+\section*{Question 6}
+The velocity of the object is:
+$$ V = -U-\Omega \times P $$
+which, when expanded, translates to:
+\begin{align*}
+V_1 &= \frac{dX}{dt} = -U_1 - \Omega_2Z + \Omega_3Y \\
+V_2 &= \frac{dY}{dt} = -U_2 - \Omega_3Z + \Omega_1Z \\
+V_3 &= \frac{dZ}{dt} = -U_3 - \Omega_1Y + \Omega_2X 
+\end{align*}
+Also, it is given that:
+$$
+x=\frac{fX}{Z} \quad y = \frac{fY}{Z}
+$$
+and by vector calculus:
+$$
+u = \frac{dx}{dt} \qquad v = \frac{dy}{dt}
+$$
+and by putting value of $x$ from above:
+\begin{align*}
+  u &= \frac{d(\frac{fX}{Z})}{dt} \\
+    &= f\frac{Z\frac{dX}{dt} - X\frac{dZ}{dt}}{Z^2} \\
+    &= f\frac{ZV_1 - XV_3}{Z^2} \\
+    &= \frac{f}{Z}(-U_1 - \Omega_2Z + \Omega_3Y) - \frac{x}{Z}(-U_3 - \Omega_1Y + \Omega_2X)\\
+    &= -U_1\frac{f}{Z} - \Omega_2f + \Omega_3y - x (-\frac{U_3}{Z} - \frac{\Omega_1y}{f}+\frac{\Omega_2x}{f})
+\end{align*}
+Therefore,\\
+$$u = -U_1\frac{f}{Z} - \Omega_2f + \Omega_3y - x (-\frac{U_3}{Z} - \frac{\Omega_1y}{f}+\frac{\Omega_2x}{f})$$
+Similary, putting value of $y$, we get:
+\begin{align*}
+  v &= \frac{d(\frac{fY}{Z})}{dt} \\
+    &= f\frac{Z\frac{dY}{dt} - Y\frac{dZ}{dt}}{Z^2} \\
+    &= f\frac{ZV_2 - YV_3}{Z^2} \\
+    &= \frac{f}{Z}(-U_2 - \Omega_3Z + \Omega_1Z) - \frac{y}{Z}(-U_3 - \Omega_1Y + \Omega_2X)\\
+    &= -U_2\frac{f}{Z} - \Omega_3x + \Omega_1f - y (-\frac{U_3}{Z} - \frac{\Omega_1y}{f}+\frac{\Omega_2x}{f})
+\end{align*}
+Therefore,\\
+$$v = -U_2\frac{f}{Z} - \Omega_3x + \Omega_1f - y (-\frac{U_3}{Z} - \frac{\Omega_1y}{f}+\frac{\Omega_2x}{f})$$
+Hence Proved.
+
+\pagebreak
+\section*{Question 7}
+From previous question, it is given that:
+\begin{align*}
+u &= -U_1\frac{f}{Z} - \Omega_2f + \Omega_3y - x (-\frac{U_3}{Z} - \frac{\Omega_1y}{f}+\frac{\Omega_2x}{f}) \\
+v &= -U_2\frac{f}{Z} - \Omega_3x + \Omega_1f - y (-\frac{U_3}{Z} - \frac{\Omega_1y}{f}+\frac{\Omega_2x}{f})
+\end{align*}
+Now, since we are taking first order linear approximation of $u$ and $y$:
+\begin{align*}
+u &= -U_1\frac{f}{Z} - \Omega_2f + \Omega_3y + x\frac{U_3}{Z} +O(x^2,xy,y^2) \\
+v &= -U_2\frac{f}{Z} + \Omega_1f - \Omega_3x + y\frac{U_3}{Z} +O(x^2,xy,y^2)
+\end{align*}
+After taking partial derivative of $u$ w.r.t. $x$ we get:
+\begin{align*}
+\frac{\partial{u}}{\partial{x}} &= U_1f\frac{\frac{\partial{Z}}{\partial{x}}}{Z^2}
+                                + 0 + 0 + \frac{U_3}{Z} - xU_3\frac{\frac{\partial{Z}}{\partial{x}}}{Z^2} \\
+                                &= U_1f\frac{Z_x}{Z^2} + \frac{U_3}{Z} + \textit{(tending to 0 terms)} \\
+\Aboxed{\therefore u_x &= U_1f\frac{Z_x}{Z^2} + \frac{U_3}{Z}}\\
+\end{align*}
+Similarly, for others:
+\begin{align*}
+\frac{\partial{u}}{\partial{y}} &= U_1f\frac{\frac{\partial{Z}}{\partial{y}}}{Z^2}
+                                + 0 + \Omega_3 + 0 - xU_3\frac{\frac{\partial{Z}}{\partial{y}}}{Z^2} \\
+                                &= U_1f\frac{Z_y}{Z^2} + \Omega_3 + \textit{(tending to 0 terms)} \\
+\Aboxed{\therefore u_y &= U_1f\frac{Z_y}{Z^2} + \Omega_3}\\
+\frac{\partial{v}}{\partial{x}} &= U_2f\frac{\frac{\partial{Z}}{\partial{x}}}{Z^2}
+                                + 0 - \Omega_3 + 0 - yU_3\frac{\frac{\partial{Z}}{\partial{x}}}{Z^2} \\
+                                &= U_2f\frac{Z_x}{Z^2} - \Omega_3 + \textit{(tending to 0 terms)} \\
+\Aboxed{\therefore v_x &= U_2f\frac{Z_x}{Z^2} - \Omega_3}\\
+\frac{\partial{v}}{\partial{y}} &= U_2f\frac{\frac{\partial{Z}}{\partial{y}}}{Z^2}
+                                + 0 + 0 + \frac{U_3}{Z} - yU_3\frac{\frac{\partial{Z}}{\partial{y}}}{Z^2} \\
+                                &= U_2f\frac{Z_y}{Z^2} + \frac{U_3}{Z} + \textit{(tending to 0 terms)} \\
+\Aboxed{\therefore v_y &= U_2f\frac{Z_y}{Z^2} + \frac{U_3}{Z} }\\
+\end{align*}
+
+Given:
+\begin{align*}
+  V_z = \frac{U_3}{Z}, \quad V_x = \frac{U_1}{Z}, \quad V_y = \frac{U_2}{Z},
+  \quad Z_X = \frac{fZ_x}{Z} \quad\textit{and}\quad Z_Y = \frac{fZ_y}{Z}
+\end{align*}
+We get:
+\begin{alignat*}{3}
+u_x \quad &= \quad U_1f\frac{Z_x}{Z^2} + \frac{U_3}{Z} \quad &&= \quad V_z + V_xZ_X\\
+u_y \quad &= \quad U_1f\frac{Z_y}{Z^2} + \Omega_3 \quad &&= \quad \Omega_3 + V_xZ_Y\\
+v_x \quad &= \quad U_2f\frac{Z_x}{Z^2} - \Omega_3 \quad &&= \quad -\Omega_3 + V_yZ_X\\
+v_y \quad &= \quad U_2f\frac{Z_y}{Z^2} + \frac{U_3}{Z} \quad &&= \quad V_z + V_yZ_Y\\
+\end{alignat*}
+Hence Proved.
+\section*{Question 8}
+Given statements:
+\begin{align*}
+  div\mathbf{v} &= (u_x+v_y) \\
+  curl\mathbf{v} &= -(u_y-v_x) \\
+  (def\mathbf{v})cos2\mu &= (u_x - v_y) \\ 
+  (def\mathbf{v})sin2\mu &= (u_y + v_x) \\ 
+\end{align*}
+Putting values in the equation:
+$$
+  \frac{div\mathbf{v}}{2}\begin{bmatrix}1&0\\0&1\end{bmatrix}
++ \frac{curl\mathbf{v}}{2}\begin{bmatrix}0&-1\\1&0\end{bmatrix}
++ \frac{def\mathbf{v}}{2}\begin{bmatrix} cos2\mu & sin2\mu \\ sin2\mu & -cos2\mu \end{bmatrix}
+$$
+we get :
+\begin{align*}
+  &= \frac{(u_x+v_y)}{2}\begin{bmatrix}1&0\\0&1\end{bmatrix}
++ \frac{(v_x - u_y)}{2}\begin{bmatrix}0&-1\\1&0\end{bmatrix}
++ \frac{def\mathbf{v}}{2}\begin{bmatrix} cos2\mu & sin2\mu \\ sin2\mu & -cos2\mu \end{bmatrix}
+\\
+  &= \begin{bmatrix}\frac{(u_x+v_y)}{2}&0\\0&\frac{(u_x+v_y)}{2}\end{bmatrix}
++ \begin{bmatrix}0&\frac{(u_y-v_x)}{2}\\\frac{(v_x - u_y)}{2}&0\end{bmatrix}
++ \begin{bmatrix}(\frac{def\mathbf{v}}{2})cos2\mu &(\frac{def\mathbf{v}}{2})sin2\mu \\
+                  (\frac{def\mathbf{v}}{2})sin2\mu & -(\frac{def\mathbf{v}}{2})cos2\mu \end{bmatrix}
+\\
+  &= \begin{bmatrix} \frac{(u_x+v_y)}{2} &\frac{(u_y-v_x)}{2} \\
+                  \frac{(u_y-v_x)}{2} &\frac{(v_y+u_x)}{2}\end{bmatrix}
++ \begin{bmatrix} \frac{(u_x-v_y)}{2} &\frac{(u_y+v_x)}{2} \\
+                  \frac{(u_y+v_x)}{2} &\frac{(v_y-u_x)}{2}\end{bmatrix}
+\\
+ &= \begin{bmatrix} u_x & u_y \\ v_x & v_y \end{bmatrix}
+\end{align*}
+Therefore,
+$$
+\begin{bmatrix} u_x & u_y \\ v_x & v_y \end{bmatrix}
+= \frac{div\mathbf{v}}{2}\begin{bmatrix}1&0\\0&1\end{bmatrix}
++ \frac{curl\mathbf{v}}{2}\begin{bmatrix}0&-1\\1&0\end{bmatrix}
++ \frac{def\mathbf{v}}{2}\begin{bmatrix} cos2\mu & sin2\mu \\ sin2\mu & -cos2\mu \end{bmatrix}
+$$
+Hence Verified.
+\pagebreak
+
+\section*{Question 9}
+We know that $\boldsymbol{\hat{\textbf{Q}}}$ is the unit vector in the camera look-at direction. Therefore,
+$$ \boldsymbol{\hat{\textbf{Q}}} = (0,0,1)$$
+Also, $\boldvec{U}$ is the translational velocity of the object. Therefore,
+\begin{align*}
+    \boldvec{U} &= (U_1,U_2,U_3)\\
+    \boldvec{A} &= \frac{\boldvec{U} - (\boldvec{U} \cdot \capvec{Q})\capvec{Q}}{Z} \\
+                &= \frac{(U_1,U_2,U_3) - (0,0,U_3)}{Z} \\
+    \therefore \boldvec{A} &= \frac{(U_1,U_2,0)}{Z}
+\end{align*}
+Next, we write $\nabla Z$ as:
+\begin{align*}
+\nabla Z &= (\frac{\partial{Z}}{\partial{x}},\frac{\partial{Z}}{\partial{y}},0)
+        = (Z_x,Z_y,0) \\
+\therefore \boldvec{F}&= \frac{f}{Z}\nabla Z = \frac{f}{Z}(Z_x,Z_y,0)
+\end{align*}
+Also, from \textit{Question 8} we have:
+\begin{align*}
+  div\mathbf{v} &= (u_x+v_y) \\
+  curl\mathbf{v} &= -(u_y-v_x) \\
+  (def\mathbf{v})cos2\mu &= (u_x - v_y) \\ 
+  (def\mathbf{v})sin2\mu &= (u_y + v_x) \\ 
+\end{align*}
+And from \textit{Question 7} we have:
+\begin{align*}
+u_x &= U_1f\frac{Z_x}{Z^2} + \frac{U_3}{Z}\\
+u_y &= U_1f\frac{Z_y}{Z^2} + \Omega_3 \\
+v_x &= U_2f\frac{Z_x}{Z^2} - \Omega_3 \\
+v_y &= U_2f\frac{Z_y}{Z^2} + \frac{U_3}{Z}
+\end{align*}
+Putting the values, we get:
+\begin{align*}
+    div\mathbf{v} &= 2\frac{U_3}{Z} + \frac{f}{Z^2}(U_1Z_x + U_2Z_y)\\
+    curl\mathbf{v} &= -2\Omega_3 + \frac{f}{Z^2}(U_2Z_x - U_1Z_y)\\
+    (def\mathbf{v})cos2\mu &= \frac{f}{Z^2}(U_1Z_x - U_2Z_y)\\
+    (def\mathbf{v})sin2\mu &= \frac{f}{Z^2}(U_1Z_y + U_2Z_x)\\ 
+\end{align*}
+Now let us evaluate:
+\begin{align*}
+    & 2\frac{\boldvec{U}\cdot\capvec{Q}}{Z} + \boldvec{F}\cdot\boldvec{A}\\
+    =& 2\frac{(U_1,U_2,U_3)\cdot(0,0,1)}{Z} + \frac{f}{Z}(Z_x,Z_y,0)\cdot \frac{(U_1,U_2,0)}{Z} \\
+    =& 2\frac{U_3}{Z} + \frac{f}{Z^2}(Z_xU_1 + Z_yU_2)\\
+    =& div\mathbf{v}\\
+    \Aboxed{\therefore div\mathbf{v} =& 2\frac{\boldvec{U}\cdot\capvec{Q}}{Z} + \boldvec{F}\cdot\boldvec{A}}\\
+\end{align*}
+Similarly, for others:
+    % -2\boldvec{\Omega} \cdot \capvec{Q} + \abs{ (\boldvec{F} \times \boldvec{A}) }
+\begin{align*}
+    &-2\boldvec{$\Omega$} \cdot \capvec{Q} + \abs{ (\boldvec{F} \times \boldvec{A}) }\\
+    =& -2(\Omega_1,\Omega_2,\Omega_3)\cdot(0,0,1) + \abs{\frac{f}{Z}(Z_x,Z_y,0)\times \frac{(U_1,U_2,0)}{Z}}\\
+    =& -2\Omega_3 + \abs{\frac{f}{Z^2}(0,0,U_2Z_x - U_1Z_y)}\\
+    =& -2\Omega_3 + \frac{f}{Z^2}(U_2Z_x - U_1Z_y)\\
+    =& curl\mathbf{v}\\
+    \Aboxed{\therefore curl\mathbf{v} =& -2\boldvec{$\Omega$} \cdot \capvec{Q} + \abs{ (\boldvec{F} \times \boldvec{A}) }}
+\end{align*}
+
+Now :
+\begin{align*}
+  def\mathbf{v} &= \sqrt{((def\mathbf{v})cos2\mu)^2 + ((def\mathbf{v})sin2\mu)^2}\\
+                &= \frac{f}{Z^2}\sqrt{ U_1^2Z_x^2 + U_2^2Z_y^2 + U_2^2Z_x^2 + U_1^2Z_y^2 }\\
+                &= \frac{f}{Z^2}\sqrt{U_1^2 + U_2^2}\sqrt{Z_x^2 + Z_y^2}\\
+                &= \abs{\frac{(U_1,U_2,0)}{Z}} + \abs{\frac{f}{Z}(Z_x,Z_y,0)}\\
+                &= \abs{\boldvec{F}}\abs{\boldvec{A}} \\
+  \Aboxed{\therefore def\mathbf{v} &= \abs{\boldvec{F}}\abs{\boldvec{A}} }
+\end{align*}
+Finally,
+\begin{align*}
+tan2\mu &= \frac{(def\mathbf{v})sin2\mu}{(def\mathbf{v})cos2\mu}\\
+        &= \frac{\frac{f}{Z^2}(U_1Z_y + U_2Z_x)}{\frac{f}{Z^2}(U_1Z_x - U_2Z_y)}\\
+        &= \frac{(U_1Z_y + U_2Z_x)}{(U_1Z_x - U_2Z_y)}\\
+        &= \frac{(\frac{Z_y}{Z_x} + \frac{U_2}{U_1})}{(1 - \frac{U_2}{U_1}\frac{Z_y}{Z_x})}\\
+\end{align*}
+And we already have:
+\begin{align*}
+  tan(\angle A) = \frac{U_2}{U_1} \qquad tan(\angle F) = \frac{Z_y}{Z_x}
+\end{align*}
+Therefore,
+\begin{align*}
+  tan2\mu &= \frac{tan(\angle A)+tan(\angle F)}{1 - tan(\angle A)tan(\angle F)}\\
+          &= \tan(\angle A + \angle F)\\
+  2\mu &= \angle A + \angle F \\
+  \Aboxed{\therefore \mu &= \frac{(\angle A + \angle F)}{2}}
+\end{align*}
+Hence Proved.
+
+\section*{Question 10}
+\begin{enumerate}[label=(\alph*)]
+
+\item Deformation can be used to encode the surface orientation as it gives us an idea of how object deforms
+with small change in object position, thus revealing information about the orientation. Similarly, divergence
+is a measure of how objects scale as they move towards camera, and thus high divergence implies that velocity
+is high and thus time of collision will be shorter. Also, these components are unaffected by viewer rotations
+such as panning or tilting of the camera unlike point image velocities, which change considerably.
+
+\item If $\boldvec{A}=0$ then $div\mathbf{v} = 2\frac{\boldvec{U}\cdot\capvec{Q}}{Z}$. Also,
+$\boldvec{U}\cdot\capvec{Q}$ encodes the velocity of object in direction of camera and $Z$ is distance of
+object. Thus, time of collision is $\frac{Z}{\boldvec{U}\cdot\capvec{Q}}$ which is $\frac{2}{div\mathbf{v}}$.
+Thus, if $\boldvec{A}=0$ then we can determine time of collision.\\
+Also, in general motion, the time of collision is bounded by:
+$$
+\frac{2}{div\mathbf{v} + def\mathbf{v}} \leq \mathbf{t_c} \leq \frac{2}{div\mathbf{v} - def\mathbf{v}}
+$$
+
+\item It can be seen that shallow objects that are near to camera will produce same affect as deep structures
+which are far away from camera, because in pinhole model the motion registered are actually scaled components of
+actual motion ($x = f\frac{X}{Z}$) and thus a large motion which is far away will approximate to small motion that
+is near (as their ratio will be of same order).
+
+\item I think that egomotion can be used to gain some knowledge about the surface orientation, assuming that
+the object in question is actually constant. This is because small changes in the direction of camera look-at direction
+can be used to map the surface gradient of the object, and thus can give us an idea of the orientation of surface of the object.
+
+\end{enumerate}
+
+\section*{Declaration of Originality}
+I hereby claim that the work presented here is my own and not copied from anywhere. Though, while writing these
+answers I had discussions with Aman Agrawal (2015CS10210) , Ankesh Gupta (2015CS10435) and Saket Dingliwal (2015CS10254).\\
+These discussions were mainly focused on clearing doubts on the meaning of question and clearing diagramatic representation
+of the given situation. Also, I referred to a paper cited in the References for help in understanding the context and
+background of question 6.\\
+
+\begin{thebibliography}{1}
+  \bibitem{imagediv} 
+  Roberto Cipolla and Andrew Blake.
+  \textit{Image divergence and deformation from closed curves}.\\ 
+  Int. Journal of Robotics Research, 16(1):77-96, 1997.
+\end{thebibliography}
+
+\end{document}

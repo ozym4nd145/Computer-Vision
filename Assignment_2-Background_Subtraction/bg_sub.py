@@ -10,16 +10,16 @@ cap = cv2.VideoCapture('./videos/vtest.avi')
 
 ret, frame = cap.read()
 background = np.zeros(frame.shape)
-frame = cv2.resize(frame, (100, 50))
-background = cv2.resize(background, (100, 50))
+#frame = cv2.resize(frame, (100, 50))
+#background = cv2.resize(background, (100, 50))
 
-fgbg = mog.MOG(frame)
-#fgbg = cv2.createBackgroundSubtractorMOG2()
+#fgbg = mog.MOG(frame)
+fgbg = cv2.createBackgroundSubtractorMOG2()
 
 
 while(1):
     ret, frame = cap.read()
-    frame = cv2.resize(frame, (100, 50)) 
+#    frame = cv2.resize(frame, (100, 50)) 
     if (not ret):
         break
     fgmask = fgbg.apply(frame)

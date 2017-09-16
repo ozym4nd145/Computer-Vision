@@ -9,8 +9,8 @@ class MOG(object):
     self.T = T
     self.dist_mult = 2.5
     self.lr = lr
-    self.params = [[[{"mean":np.zeros(frame.shape[2]),"std_dev": 0.25,"weight": (1.0/K)} for a in range(self.K)]  for b in range(self.cols)] for c in range(self.rows)]
-    self.HIGH_VAR=2
+    self.params = [[[{"mean":np.zeros(frame.shape[2]),"std_dev": 10,"weight": (1.0/K)} for a in range(self.K)]  for b in range(self.cols)] for c in range(self.rows)]
+    self.HIGH_VAR=10
     self.denom_const = np.power(2*np.pi,(self.N)/2)
 
   def mahalanaobis_dist_sq(self,pixel,mean,std_dev):

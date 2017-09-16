@@ -1,0 +1,96 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\title{COL780: Computer Vision\\Max-Flow Min-Cut Theorem}
+\author{Suyash Agrawal\\2015CS10262}
+\date{September 15,2017}
+\geometry{
+    top=20mm,
+}
+\begin{document}
+\maketitle
+\section{Statement}
+    We are given a directed graph $G = (V,E)$, consisting of a source $s$ (node with all
+    outgoing edges) and a sink $t$ (node with all incoming edges). Also, we have a mapping
+    $c: E \rightarrow \mathbb{R}^{+}$, denoted by $c_{uv}$ or $c(u,v)$, which is the maximum capacity
+    of the edge $(u,v)$.\\
+    Now, we define flow $f: E \rightarrow \mathbb{R}^+$ in the graph satisfying the following constraints:
+    \begin{itemize}
+        \item Capacity Constaint: $f(u,v) \leq c(u,v)$
+        \item Conservation of Flow: $\forall v\in V\setminus \{s,t\}: \sum \nolimits_{\{u:(u,v)\in E\}}f(u,v)
+            =\sum \nolimits_{\{u:(v,u)\in E\}}f(v,u).$
+    \end{itemize} 
+    Also, the value of flow is defined as the net amount of flow leaving the source. Mathematically, it is formulated as:
+    $$|f| = \sum \nolimits_{\{v:(s,v)\in E\}}f(s,v) - \sum \nolimits_{\{v:(v,s)\in E\}}f(v,s)$$
+    \\
+    Finally, we define a cut $C=(S,T)$, which is a partition of $V$ in two disjoint sets $S$, $T$ such that $s \in S$ and
+    $t \in T$. The capacity of the cut if defined as the sum of the capacity of edges going from $S$ to $T$. Mathematically,
+    $$cap(C) = \sum \nolimits_{\{(u,v)\in E, u \in S, v \in T\}}c(u,v)$$
+    \\
+    \textbf{Max-flow min-cut theorem}: The maximum value of an s-t flow is equal to the minimum capacity over all s-t cuts.
+\section{Proof}
+    In order to show that max-flow is equal to min cut, we will first show that all cuts are always greater or equal to all
+    flows and then proceed to show that there exists a flow which is equal to a cut.\\
+    \textbf{Lemma 1.} Given any flow f and any cut C on graph. Then, $|f| \leq cap(C)$\\
+    \textit{Proof.} Let cut $C = (S,T)$. Since, $s \in S$ and $t \notin S$\\
+    $$|f| = f_{out}(s) - f_{in}(s) = f_{out}{S} - f_{in}(S)$$
+    since nodes other $s$ in S don't contribute to flow. Now, the flows which positively impact $|f|$ are in cut $C$, therefore
+    $$|f| \leq \sum_{(u,v)\in\text{edges of cut C}}f(u,v) \leq \sum_{(u,v)\in\text{edges of cut C}}c(u,v) = cap(C)$$
+    Hence Proved.\\\\
+    \textbf{Corollary.} Let $f^*$ be the maximum flow and $C^*$ be the minimum cut. Then $|f^*| \leq cap(C^*)$.
+    \\\\
+    Now, let us define the notion of augmenting paths. Consider any path $P$ from $s$ to $t$ without considering the direction
+    of edges. Define the f-augment of $P$ to be:
+    $$aug(P) = \min_{(u,v)\in P} res(u,v)$$
+    where,
+    $$res(u,v) = \begin{cases} c(u,v) - f(u,v), &\text{if (u,v) points towards t}\\
+    f(u,v), &\text{if (u,v) points towards s} \end{cases}$$
+    A path $P$ is called augmenting path iff it starts from source $s$ and ends at sink $t$ and has a positive f-augment.\\
+    Observe that if $P$ is an augmenting path then we can change our flow according to:
+    $$ f'(u,v) = \begin{cases} f(u,v)+aug(P), &\text{if }(u,v)\in P\text{ and (u,v) points towards t}\\
+                                f(u,v)-aug(P), &\text{if }(u,v)\in P\text{ and (u,v) points towards s}\\
+                                f(u,v),&\text{otherwise}
+    \end{cases}$$
+    and the resulting flow $f'$ will be greater than our previous flow $f$ by value $aug(P)$.\\\\
+    \textbf{Lemma 2.} There exists a flow $f$ and a cut $C$, such that $|f| = cap(C)$\\
+    \textit{Proof.} Let us start with zero flow $f$ and keep constructing new flow $f'$ from any augmenting path $P$ we can
+    find in the graph. Now we will have a flow $f^{*}$ such that no augmenting path from $s$ to $t$ is possible.\\
+    Now, construct a set S of all nodes $u$ such that there exists a augmenting path from source $s$ to $v$. Note that sink $t$
+    cannot be in this set by construction. Let us denote set $\overline{S}$ by $T$. This also defines a cut $C^* = (S,T)$. We
+    denote set of edges of cut $C^*$ by $K$ i.e., $K = \{(u,v)| u\in S,v\in T, (u,v) \in E\}$
+
+    Suppose, for the sake of contradiction, that $\exists (u,v)\in K \text{ s.t. }f^*(u,v) < c(u,v)$. Now in this case we can
+    extend our set $S$ to include node $v$ because there exists a path from $s$ to $v$ which is augmenting. But this results in
+    a contradiction as set $S$ was maximal set which contained all vertices with augmenting path from $s$ and vertex $v$ was not
+    in the set $S$. Thus,
+    $$ \forall (u,v) \in K \quad f^*(u,v) = c(u,v) $$
+    Similarly, $f^*(u,v) = 0$ for all $(v,u) \in \overline{K}$. Now,
+    $$
+    |f^*| = \sum_{(u,v)\in K}f^*(u,v) - \sum_{(v,u)\in \overline{K}}f^*(v,u) = \sum_{(u,v)\in K}c(u,v) - 0 = cap(C^*)
+    $$
+    Thus, we have a flow $f^*$ and a cut $C^*$ with equal value.
+    \\\\
+    \textbf{Max-flow min-cut theorem}: The maximum value of an s-t flow is equal to the minimum capacity over all s-t cuts.\\
+    \textit{Proof}: Let the min cut be $C^*$ and the max flow be $f^*$. By Corollary, we know that:
+    $$|f^*| \leq cap(C^*)$$
+    But, from Lemma 2, we know that:
+    $$\exists f,C \text{ s.t. } |f| = cap(C)$$
+    Therefore, we must have that:
+    $$|f^*| = cap(C^*)$$
+    as $f^*$ is the maximum of all flows and $C^*$ is minimum of all cuts.\\
+    Hence Proved.
+
+\begin{thebibliography}{9}
+  \bibitem{eaton} 
+    Joseph, Shaun
+  \textit{The Max-Flow Min-Cut Theorem}.
+  The University of Rhode Island, Mathematics Dept:Dec 6, 2007.
+  \bibitem{wiki} 
+      \textit{Max-flow min-cut theorem - Wikipedia, the free encyclopedia}. Retrieved from \texttt{https://en.wikipedia.org/wiki/Max-flow\_min-cut\_theorem} ([Online; accessed 15-September-2017])
+
+\end{thebibliography}
+\end{document}
