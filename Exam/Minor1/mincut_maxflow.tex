@@ -1,8 +1,9 @@
-\documentclass{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage{graphicx}
 \usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{mathtools}
 
 \title{COL780: Computer Vision\\Max-Flow Min-Cut Theorem}
@@ -12,6 +13,9 @@
     top=20mm,
 }
 \begin{document}
+\newtheorem*{thm}{Theorem}
+\newtheorem{lm}{Lemma}
+\newtheorem{cor}{Corollary}[lm]
 \maketitle
 \section{Statement}
     We are given a directed graph $G = (V,E)$, consisting of a source $s$ (node with all
@@ -31,18 +35,19 @@
     $t \in T$. The capacity of the cut if defined as the sum of the capacity of edges going from $S$ to $T$. Mathematically,
     $$cap(C) = \sum \nolimits_{\{(u,v)\in E, u \in S, v \in T\}}c(u,v)$$
     \\
-    \textbf{Max-flow min-cut theorem}: The maximum value of an s-t flow is equal to the minimum capacity over all s-t cuts.
+        \begin{thm}[Max-Cut Min-Flow] The maximum value of an s-t flow is equal to the minimum capacity over all s-t cuts.\end{thm}
 \section{Proof}
     In order to show that max-flow is equal to min cut, we will first show that all cuts are always greater or equal to all
     flows and then proceed to show that there exists a flow which is equal to a cut.\\
-    \textbf{Lemma 1.} Given any flow f and any cut C on graph. Then, $|f| \leq cap(C)$\\
-    \textit{Proof.} Let cut $C = (S,T)$. Since, $s \in S$ and $t \notin S$\\
+    \begin{lm}\label{lm:greater} Given any flow f and any cut C on graph. Then, $|f| \leq cap(C)$\end{lm}
+    \begin{proof} Let cut $C = (S,T)$. Since, $s \in S$ and $t \notin S$\\
     $$|f| = f_{out}(s) - f_{in}(s) = f_{out}{S} - f_{in}(S)$$
     since nodes other $s$ in S don't contribute to flow. Now, the flows which positively impact $|f|$ are in cut $C$, therefore
     $$|f| \leq \sum_{(u,v)\in\text{edges of cut C}}f(u,v) \leq \sum_{(u,v)\in\text{edges of cut C}}c(u,v) = cap(C)$$
-    Hence Proved.\\\\
-    \textbf{Corollary.} Let $f^*$ be the maximum flow and $C^*$ be the minimum cut. Then $|f^*| \leq cap(C^*)$.
-    \\\\
+    Hence Proved.
+    \end{proof}
+    \begin{cor}\label{cor:greater} Let $f^*$ be the maximum flow and $C^*$ be the minimum cut. Then $|f^*| \leq cap(C^*)$.
+    \end{cor}
     Now, let us define the notion of augmenting paths. Consider any path $P$ from $s$ to $t$ without considering the direction
     of edges. Define the f-augment of $P$ to be:
     $$aug(P) = \min_{(u,v)\in P} res(u,v)$$
@@ -55,9 +60,9 @@
                                 f(u,v)-aug(P), &\text{if }(u,v)\in P\text{ and (u,v) points towards s}\\
                                 f(u,v),&\text{otherwise}
     \end{cases}$$
-    and the resulting flow $f'$ will be greater than our previous flow $f$ by value $aug(P)$.\\\\
-    \textbf{Lemma 2.} There exists a flow $f$ and a cut $C$, such that $|f| = cap(C)$\\
-    \textit{Proof.} Let us start with zero flow $f$ and keep constructing new flow $f'$ from any augmenting path $P$ we can
+    and the resulting flow $f'$ will be greater than our previous flow $f$ by value $aug(P)$.
+    \begin{lm}\label{lm:exist} There exists a flow $f$ and a cut $C$, such that $|f| = cap(C)$\end{lm}
+    \begin{proof} Let us start with zero flow $f$ and keep constructing new flow $f'$ from any augmenting path $P$ we can
     find in the graph. Now we will have a flow $f^{*}$ such that no augmenting path from $s$ to $t$ is possible.\\
     Now, construct a set S of all nodes $u$ such that there exists a augmenting path from source $s$ to $v$. Note that sink $t$
     cannot be in this set by construction. Let us denote set $\overline{S}$ by $T$. This also defines a cut $C^* = (S,T)$. We
@@ -73,16 +78,17 @@
     |f^*| = \sum_{(u,v)\in K}f^*(u,v) - \sum_{(v,u)\in \overline{K}}f^*(v,u) = \sum_{(u,v)\in K}c(u,v) - 0 = cap(C^*)
     $$
     Thus, we have a flow $f^*$ and a cut $C^*$ with equal value.
-    \\\\
-    \textbf{Max-flow min-cut theorem}: The maximum value of an s-t flow is equal to the minimum capacity over all s-t cuts.\\
-    \textit{Proof}: Let the min cut be $C^*$ and the max flow be $f^*$. By Corollary, we know that:
+    \end{proof}
+    \begin{thm}[Max-flow min-cut theorem] The maximum value of an s-t flow is equal to the minimum capacity over all s-t cuts.\end{thm}
+        \begin{proof} Let the min cut be $C^*$ and the max flow be $f^*$. By Corollary \ref{cor:greater}, we know that:
     $$|f^*| \leq cap(C^*)$$
-    But, from Lemma 2, we know that:
+            But, from Lemma \ref{lm:exist}, we know that:
     $$\exists f,C \text{ s.t. } |f| = cap(C)$$
     Therefore, we must have that:
     $$|f^*| = cap(C^*)$$
     as $f^*$ is the maximum of all flows and $C^*$ is minimum of all cuts.\\
     Hence Proved.
+    \end{proof}
 
 \begin{thebibliography}{9}
   \bibitem{eaton} 
