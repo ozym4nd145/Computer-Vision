@@ -35,19 +35,19 @@ void MOG::apply(const cv::Mat& frame, cv::Mat& result)
             cv::Vec3b img_px = frame.at<cv::Vec3b>(i,j);
             PixelInfo& info_px = frameInfo[i][j];
 
-            if(i==0 && j==0)
-            {
-                cout<<"Mean: \n";
-                for(int k=0;k<num_gauss;k++)
-                {
-                    cout<<k<<": ";
-                    for(int ch=0;ch<num_channel;ch++)
-                        cout<<info_px.mean[k][ch]<<", ";
-                    cout<<endl;
-                    cout<<"\tStd: "<<info_px.std_dev[k]<<endl;
-                    cout<<"\tWeight: "<<info_px.weight[k]<<endl;
-                }
-            }
+//            if(i==0 && j==0)
+//            {
+//                cout<<"Mean: \n";
+//                for(int k=0;k<num_gauss;k++)
+//                {
+//                    cout<<k<<": ";
+//                    for(int ch=0;ch<num_channel;ch++)
+//                        cout<<info_px.mean[k][ch]<<", ";
+//                    cout<<endl;
+//                    cout<<"\tStd: "<<info_px.std_dev[k]<<endl;
+//                    cout<<"\tWeight: "<<info_px.weight[k]<<endl;
+//                }
+//            }
             
             // Getting sort index of the pixels
             vector<pair<float,int> > sort_criteria;
@@ -86,10 +86,6 @@ void MOG::apply(const cv::Mat& frame, cv::Mat& result)
                 answer /= info_px.std_dev[k];
                 float dst = sqrt(answer);
                 sum_prob += epsilon + (this->const_prob_factor)*(exp((-0.5)*answer)/pow(info_px.std_dev[k],(0.5*num_channel)));
-                if(i==0 && j==0)
-                {
-                    cout<<"sum prob: "<<sum_prob<<endl;
-                }
 
                 if(dst < (match_scale*info_px.std_dev[k]) && dst < min_dist)
                 {
@@ -125,12 +121,12 @@ void MOG::apply(const cv::Mat& frame, cv::Mat& result)
             {
                 result.at<uchar>(i,j) = (is_background[match_gaussian])?(0):(255);                    
 
-                if(i==0 && j==0)
-                {
-                    cout<<"Pixel: "<<i<<","<<j<<" is "<<is_background[match_gaussian]<<" , and value: "<<(int)result.at<uchar>(i,j)<<endl;
-                    cout<<"dist: "<<min_dist<<endl;
-                    cout<<"matched_gaussian: "<<match_gaussian<<endl;
-                }
+                //if(i==0 && j==0)
+                //{
+                //    cout<<"Pixel: "<<i<<","<<j<<" is "<<is_background[match_gaussian]<<" , and value: "<<(int)result.at<uchar>(i,j)<<endl;
+                //    cout<<"dist: "<<min_dist<<endl;
+                //    cout<<"matched_gaussian: "<<match_gaussian<<endl;
+                //}
 
                 for(int k=0;k<num_gauss;k++)
                 {
@@ -140,9 +136,7 @@ void MOG::apply(const cv::Mat& frame, cv::Mat& result)
                         info_px.weight[k] += (this->lr);
                         float dst = min_dist * min_dist;
                         float prob_now = epsilon + (this->const_prob_factor)*(exp((-0.5)*dst)/pow(info_px.std_dev[k],(0.5*num_channel)));
-                        if(i==0 && j==0) cout<<"Prob now: "<<prob_now<<endl;
                         float rho = (this->lr)*(prob_now);
-                        if(i==0 && j==0) cout<<"Prev RHO"<<rho<<endl;
                         rho /= sum_prob;
                         float answer = 0;
                         for(int ch=0;ch<num_channel;ch++)
@@ -158,18 +152,18 @@ void MOG::apply(const cv::Mat& frame, cv::Mat& result)
                         float new_var = prev_var*(1-rho) + rho*answer;
                         info_px.std_dev[k] = sqrt(new_var);
 
-                        if(i==0&&j==0)
-                        {
-                            cout<<"rho: "<<rho<<endl;
-                            cout<<"sum_prob: "<<sum_prob<<endl;
-                            cout<<"(this->lr)"<<(this->lr)<<endl;
-                            cout<<"const factor: "<<(this->const_prob_factor)<<endl;
-                            cout<<"(exp((-0.5)*dst): "<<(exp((-0.5)*dst))<<endl;
-                            cout<<"prob_now: "<<prob_now<<endl;
-                            cout<<"answer: "<<answer<<endl;
-                            cout<<"prev_var: "<<prev_var<<endl;
-                            cout<<"new_var: "<<new_var<<endl<<endl;
-                        }
+                        //if(i==0&&j==0)
+                        //{
+                        //    cout<<"rho: "<<rho<<endl;
+                        //    cout<<"sum_prob: "<<sum_prob<<endl;
+                        //    cout<<"(this->lr)"<<(this->lr)<<endl;
+                        //    cout<<"const factor: "<<(this->const_prob_factor)<<endl;
+                        //    cout<<"(exp((-0.5)*dst): "<<(exp((-0.5)*dst))<<endl;
+                        //    cout<<"prob_now: "<<prob_now<<endl;
+                        //    cout<<"answer: "<<answer<<endl;
+                        //    cout<<"prev_var: "<<prev_var<<endl;
+                        //    cout<<"new_var: "<<new_var<<endl<<endl;
+                        //}
                     }
                 }
             }

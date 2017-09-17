@@ -34,7 +34,7 @@ void processVideo(char* videoFilename,int arg)
     else
         frame = cv::imread("./debug_img/0.jpg");
 
-    MOG my_mog(frame,4,0.1,0.79);
+    MOG my_mog(frame,3,0.1,0.79);
     int i=0;
 	while( (char)keyboard != 'q' && (char)keyboard != 27 ){
         if(arg!=2) 
