@@ -5,7 +5,8 @@ import mog
 THRESHOLD = 30
 CONFIDENCE = 0.1
 
-cap = cv2.VideoCapture('./videos/vtest.avi')
+#cap = cv2.VideoCapture('./videos/vtest.avi')
+cap = cv2.VideoCapture('./videos/car-overhead-1.avi')
 #cap = cv2.VideoCapture(0)
 
 ret, frame = cap.read()

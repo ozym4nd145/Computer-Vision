@@ -1,6 +1,6 @@
 import numpy as np
 class MOG(object):
-  def __init__(self,frame, K=3,T=0.3,lr=0.25):
+  def __init__(self,frame, K=5,T=0.3,lr=0.25):
     self.rows = frame.shape[0]
     self.cols = frame.shape[1]
     self.N = frame.shape[2]
