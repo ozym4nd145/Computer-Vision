@@ -19,7 +19,7 @@ class MOG(object):
     sort_weights = self.weight/self.std_dev
     index_sort_weights = np.argsort(-sort_weights,axis=2)
 
-    sqdist_frames = (np.sum((np.expand_dims(frame,axis=2)-self.mean)**2,axis=3))/self.std_dev
+    sqdist_frames = (np.sum((np.expand_dims(frame,axis=2)-self.mean)**2,axis=3))/(self.std_dev**2)
     prob_frames = np.exp((-0.5)*sqdist_frames)/(self.denom_const*(np.sqrt(self.N)*self.std_dev))  
     dist_frames = np.sqrt(sqdist_frames)
     admissible_frames = dist_frames < self.dist_mult*self.std_dev
