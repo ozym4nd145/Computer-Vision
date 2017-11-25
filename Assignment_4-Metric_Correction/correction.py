@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 import argparse
+import sys
 
 def show_images(imgList):
     while True:
@@ -69,6 +70,8 @@ if __name__=="__main__":
                         help='Input image to be corrected')
     parser.add_argument('out', metavar='O',
                         help='path to the output folder')
+    parser.add_argument('--factor', metavar='F', default=1.0, type=float,
+                        help='Factor to scale up the output image')
     parser.add_argument('--nowrite', action="store_true",
                         help='do not write the output images')
     parser.add_argument('--show',  action="store_true",
@@ -77,6 +80,7 @@ if __name__=="__main__":
 
     img_file = args.img
     output_folder = args.out
+    scale = args.factor
 
     img_name,img_ext = os.path.splitext(os.path.basename(img_file))
     aff_file = os.path.join(output_folder,img_name+"_aff.jpg")
@@ -90,8 +94,8 @@ if __name__=="__main__":
     H_met = get_metric(*points)
     H_aff = get_affine(*points)
 
-    met_img = cv2.warpPerspective(img,H_met,(img.shape[1],img.shape[0]))
-    aff_img = cv2.warpPerspective(img,H_aff,(img.shape[1],img.shape[0]))
+    met_img = cv2.warpPerspective(img,H_met,(int(scale*img.shape[1]),int(scale*img.shape[0])))
+    aff_img = cv2.warpPerspective(img,H_aff,(int(scale*img.shape[1]),int(scale*img.shape[0])))
 
     if not args.nowrite:
         ## ensure existence of base folder
