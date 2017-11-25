@@ -15,6 +15,8 @@ if __name__=="__main__":
                         help='path to the write the output video')
     parser.add_argument('--nowrite', action="store_true",
                         help='do not write the output video')
+    parser.add_argument('--imwrite', action="store_true",
+                        help='write the output images')
     parser.add_argument('--show',  action="store_true",
                         help='show the output video')
     args = parser.parse_args()
@@ -23,6 +25,7 @@ if __name__=="__main__":
     outp_vid = args.out
 
     cols,rows = (200,300)
+    # cols,rows = (400,600)
     DIVIDER_LEN=20
 
     cap = cv2.VideoCapture(video_file)
@@ -43,6 +46,12 @@ if __name__=="__main__":
         fps = cap.get(5) ## get fps of video
         vid = cv2.VideoWriter(outp_vid, fourcc, fps, (rows*2+DIVIDER_LEN, cols))
 
+    ORIG_FOLDER = os.path.join(os.path.split(outp_vid)[0],"Original")
+    STABLE_FOLDER = os.path.join(os.path.split(outp_vid)[0],"Stable")
+    os.makedirs(ORIG_FOLDER,exist_ok=True)
+    os.makedirs(STABLE_FOLDER,exist_ok=True)
+
+    cnt = 1
     while True:
         ret,frame=  cap.read()
         if not ret:
@@ -60,6 +69,12 @@ if __name__=="__main__":
         if not args.nowrite:
             vid.write(result)
         
+        if args.imwrite:
+            name = ('{:04}'.format(cnt))+".jpg"
+            cv2.imwrite(os.path.join(ORIG_FOLDER,name),resz_frame)
+            cv2.imwrite(os.path.join(STABLE_FOLDER,name),warped_img)
+
+        
         if args.show:
             # cv2.imshow("original",resz_frame)
             # cv2.imshow("result",warped_img)
@@ -67,6 +82,8 @@ if __name__=="__main__":
             ret = cv2.waitKey(20)
             if (ret & 0xFF == ord('q'))or(ret ==27):
                 break
+
+        cnt += 1
     cv2.destroyAllWindows()
     if not args.nowrite:
         vid.release()
